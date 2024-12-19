@@ -57,20 +57,20 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         $validated = $request->validate([
-            'codCustomer' => 'required|string|unique:customers,codCustomer',
-            'address' => 'required|string|max:255',
-            'passport' => 'required|string|max:50',
-            'dui' => 'required|string|max:20',
-            'nit' => 'required|string|max:20',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'celphone' => 'required|string|max:20',
-            'phone' => 'required|string|max:20',
+            'codCustomer' => 'nullable|string|unique:customers,codCustomer,' . $customer->id,
+            'address' => 'nullable|string|max:255',
+            'passport' => 'nullable|string|max:50',
+            'dui' => 'nullable|string|max:20',
+            'nit' => 'nullable|string|max:20',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:customers,email,' . $customer->id,
+            'celphone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         try {
             $customer->update($validated);
-            return response()->json(['message' => 'Cliente actualizado con exito'], 200);
+            return response()->json(['message' => 'Cliente actualizado con éxito', 'data' => $customer], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al actualizar cliente'], 500);
         }
