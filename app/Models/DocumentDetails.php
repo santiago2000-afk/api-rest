@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentDetails extends Model
 {
-    protected $table = 'documentdetails';
+    protected $table = 'document_details';
     protected $primaryKey = 'id';
     public $timestamps = false;
     

@@ -36,7 +36,7 @@ class DocumentDetailsController extends Controller
         $validated = $request->validate([
             'uuid' => 'required',
             'quantity' => 'required',
-            'product' => 'required|string|max:255',
+            'product' => 'required',
             'unitPrice' => 'required',
         ]);
 
@@ -87,10 +87,11 @@ class DocumentDetailsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DocumentDetails $documentDetails)
+    public function destroy(DocumentDetails $documentDetails, $id)
     {
         try {
-            $documentDetails->delete();
+            $id = DocumentDetails::find($id);
+            $id->delete();
             return response()->json(['message' => 'Documento con dettale eliminado con exito'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al eliminar Documento con dettale'], 500);

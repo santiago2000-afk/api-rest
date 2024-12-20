@@ -119,4 +119,17 @@ class DocumentController extends Controller
             return response()->json(['error', 'Error al obtener los documentos', 'details' => $e->getMessage()], 500);
         }
     }
+
+    public function updateStatus($id) {
+        $document = Document::find($id);
+
+        if (!$document) {
+            return response()->json(['error', 'Documento no encontrado'], 400);
+        }
+
+        $document->status = 1;
+        $document->save();
+
+        return response()->json(['message', 'Estado actualizado', 'data' => $document], 200);
+    }
 }

@@ -17,7 +17,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('documents', DocumentController::class);
-    Route::apiResource('documentdetails', DocumentDetailsController::class);
+    Route::apiResource('document-details', DocumentDetailsController::class);
     Route::get('documents/status/{status}', [DocumentController::class, 'getByStatus']);
+    Route::put('documents/change/status/{id}', [DocumentController::class, 'updateStatus']);
     Route::get('logout', [AuthController::class, 'logout']);
 });
