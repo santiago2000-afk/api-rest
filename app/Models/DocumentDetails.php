@@ -11,7 +11,6 @@ class DocumentDetails extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'uuid',
         'quantity',
         'product',
         'unitPrice',
