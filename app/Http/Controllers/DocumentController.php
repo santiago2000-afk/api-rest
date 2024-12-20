@@ -87,7 +87,7 @@ class DocumentController extends Controller
             return response()->json(['error' => 'Error al actualizar cliente'], 500);
         }
     }
-
+    
     /**
      * Remove the specified resource from storage.
      */
