@@ -19,4 +19,9 @@ class Customer extends Model
         'celphone',
         'phone',
     ];
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'codCustomer', 'codCustomer');
+    }
 }

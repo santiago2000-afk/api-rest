@@ -16,4 +16,14 @@ class Document extends Model
         'status',
         'webUser',
     ];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'codCustomer', 'codCustomer');
+    }
+
+    public function documentDetails()
+    {
+        return $this->hasMany(DocumentDetail::class, 'uuid', 'uuid');
+    }
 }

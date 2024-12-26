@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customers', CustomerController::class);
         Route::apiResource('documents', DocumentController::class);
         Route::apiResource('document-details', DocumentDetailsController::class);
+        //Route::post('/saveDocument', [DocumentController::class, 'store']);
         Route::get('documents/status/{status}', [DocumentController::class, 'getByStatus']);
         Route::put('documents/change/status/{id}', [DocumentController::class, 'updateStatus']);
         Route::get('logout', [AuthController::class, 'logout']);

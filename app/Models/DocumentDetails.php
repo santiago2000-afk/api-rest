@@ -11,8 +11,14 @@ class DocumentDetails extends Model
     public $timestamps = false;
     
     protected $fillable = [
+        'uuid',
         'quantity',
         'product',
         'unitPrice',
     ];
+
+    public function document()
+    {
+        return $this->belongsTo(Document::class, 'uuid', 'uuid');
+    }
 }
