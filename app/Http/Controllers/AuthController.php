@@ -20,7 +20,10 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors());
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ]);
         }
 
         $user = User::create([
@@ -33,6 +36,8 @@ class AuthController extends Controller
 
         return response()
             ->json([
+                'status' => 'Ok',
+                'message' => 'Registro exitoso',
                 'data' => $user,
                 'access_token' => $token,
                 'token_type' => 'Bearer',
@@ -41,18 +46,34 @@ class AuthController extends Controller
 
     public function login(Request $request) {
 
-        if(!Auth::attempt($request->only('email', 'password'))){
+        $credetentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if(!Auth::attempt($credetentials)){
             return response()
-                   ->json(['message', 'unauthorized'], 401);
+                   ->json([
+                    'status', 'error',
+                    'message', 'Credenciales incorrectas. Por favor, verifica tu email y contraseña.'
+                ], 401);
         }
 
-        $user = User::where('email', $request['email'])->firstOrFail();
+        $user = User::where('email', $credetentials['email'])->first();
+        
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'El usuario no existe',
+            ], 404);
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()
             ->json([
-                'message' => 'Hi ' . $user->name,
+                'status' => 'Ok',
+                'message' => 'Hola ' . $user->name .'. Acabas de iniciar sesion.',
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
