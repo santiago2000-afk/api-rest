@@ -207,4 +207,21 @@ class DocumentController extends Controller
 
         return response()->json(['message', 'Estado actualizado', 'data' => $document], 200);
     }
+
+    public function getByWebUser($webUser)
+    {
+        try {
+            // Buscar documentos por webUser
+            $documents = Document::where('webUser', $webUser)->get();
+    
+            // Verificar si se encontraron documentos
+            if ($documents->isEmpty()) {
+                return response()->json(['error' => 'No se encontraron documentos para este usuario'], 404);
+            }
+    
+            return response()->json(['message' => 'Documentos encontrados', 'data' => $documents], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al obtener los documentos', 'details' => $e->getMessage()], 500);
+        }
+    }
 }

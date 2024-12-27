@@ -23,6 +23,7 @@ Route::prefix('v1')->group(function () {
         //Route::post('/saveDocument', [DocumentController::class, 'store']);
         Route::get('documents/status/{status}', [DocumentController::class, 'getByStatus']);
         Route::put('documents/change/status/{id}', [DocumentController::class, 'updateStatus']);
+        Route::get('/documents/webuser/{webUser}', [DocumentController::class, 'getByWebUser']);
         Route::get('logout', [AuthController::class, 'logout']);
     });
 });
