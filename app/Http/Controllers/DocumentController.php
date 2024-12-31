@@ -55,74 +55,66 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-    // Validar estructura JSON recibida
-    $validator = Validator::make($request->all(), [
-        // Validación para el cliente
-        'customer.codCustomer' => 'required|string',
-        'customer.address' => 'required|string',
-        'customer.dui' => 'required|string',
-        'customer.nit' => 'required|string',
-        'customer.name' => 'required|string',
-        'customer.email' => 'required|email',
-        'customer.celphone' => 'required|string',
-        'customer.phone' => 'required|string',
-        // Validación para el documento
-        'document.uuid' => 'required|string',
-        'document.webUser' => 'required|string',
-        'document.date' => 'required|date',
-        'document.totalSale' => 'required|numeric',
-        'document.status' => 'required|integer|in:0,1',
-        'document.documentDetail' => 'required|array',
-        // Validación para los detalles del documento
-        'document.documentDetail.*.quantity' => 'required|integer|min:1',
-        'document.documentDetail.*.product' => 'required|string',
-        'document.documentDetail.*.unitPrice' => 'required|numeric|min:0',
-    ]);
-
-    // Si la validación falla, devolver errores
-    if ($validator->fails()) {
-        return response()->json([
-            'message' => 'Validation errors',
-            'errors' => $validator->errors(),
-        ], 422);
-    }
-
-    // Iniciar transacción
-    DB::beginTransaction();
-
-    try {
-        // Guardar los datos del cliente
-        $customerData = $request->input('customer');
-        $customer = Customer::create($customerData);
-
-        // Guardar los datos del documento
-        $documentData = $request->input('document');
-        $documentData['codCustomer'] = $customer->codCustomer; // Relación con el cliente
-        $document = Document::create($documentData);
-
-        // Guardar los detalles del documento
-        $details = $documentData['documentDetail'];
-        foreach ($details as $detail) {
-            $detail['uuid'] = $document->uuid; // Relación con el documento
-            DocumentDetails::create($detail);
+        $validator = Validator::make($request->all(), [
+            'customer.codCustomer' => 'required|string',
+            'customer.address' => 'required|string',
+            'customer.dui' => 'required|string',
+            'customer.nit' => 'required|string',
+            'customer.name' => 'required|string',
+            'customer.email' => 'required|email',
+            'customer.celphone' => 'required|string',
+            'customer.phone' => 'required|string',
+            'document.uuid' => 'required|string',
+            'document.webUser' => 'required|string',
+            'document.date' => 'required|date',
+            'document.totalSale' => 'required|numeric',
+            'document.documentDetail' => 'required|array',
+            'document.documentDetail.*.quantity' => 'required|integer|min:1',
+            'document.documentDetail.*.product' => 'required|string',
+            'document.documentDetail.*.unitPrice' => 'required|numeric|min:0',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation errors',
+                'errors' => $validator->errors(),
+            ], 422);
         }
+    
+        DB::beginTransaction();
+    
+        try {
+            // Guardar los datos del cliente
+            $customerData = $request->input('customer');
+            $customer = Customer::create($customerData);
+    
+            
+            $documentData = $request->input('document');
+            $documentData['codCustomer'] = $customer->codCustomer;
+            $documentData['status'] = 0;
+            $document = Document::create($documentData);
+    
+            $details = $documentData['documentDetail'];
+            foreach ($details as $detail) {
+                $detail['uuid'] = $document->uuid;
+                DocumentDetails::create($detail);
+            }
 
-        // Confirmar transacción
-        DB::commit();
-
-        return response()->json([
-            'message' => 'Document and details saved successfully',
-            'document_id' => $document->id,
-        ], 201);
-    } catch (\Exception $e) {
-        // Revertir cambios si hay un error
-        DB::rollBack();
-
-        return response()->json([
-            'message' => 'Failed to save document',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
+            DB::commit();
+    
+            return response()->json([
+                'message' => 'Document and details saved successfully',
+                'document_id' => $document->id,
+            ], 201);
+        } catch (\Exception $e) {
+            
+            DB::rollBack();
+    
+            return response()->json([
+                'message' => 'Failed to save document',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

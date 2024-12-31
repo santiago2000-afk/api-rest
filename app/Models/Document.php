@@ -17,6 +17,14 @@ class Document extends Model
         'webUser',
     ];
 
+    protected $attributes = [
+        'status' => 0,
+    ];
+    
+    protected $hidden = [
+        'status',
+    ];
+    
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'codCustomer', 'codCustomer');
